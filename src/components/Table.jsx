@@ -11,7 +11,6 @@ function Table({ planetName }) {
   }
 
   let planets = planetsData.results;
-
   delete planets[0].residents;
 
   const theaders = Object.keys(planets[0]);
