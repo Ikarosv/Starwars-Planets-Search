@@ -4,21 +4,22 @@ import useFetch from '../hooks/useFetch';
 import PlanetsContext from './PlanetsContext';
 
 function PlanetsProvider({ children }) {
-  const { data, loading, error, fetchData } = useFetch();
+  const { data: planetsData, loading, error, fetchData } = useFetch();
 
   useEffect(() => {
     async function makeFetch() {
-      await fetchData();
+      await fetchData('https://swapi.dev/api/planets');
     }
 
     makeFetch();
-  }, [fetchData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const value = useMemo(() => ({
-    data,
+    planetsData,
     loading,
     error,
-  }), [data, loading, error]);
+  }), [planetsData, loading, error]);
 
   return (
     <PlanetsContext.Provider value={ value }>
@@ -30,3 +31,5 @@ function PlanetsProvider({ children }) {
 PlanetsProvider.propTypes = {
   children: PropTypes.shape(),
 }.isReqired;
+
+export default PlanetsProvider;
