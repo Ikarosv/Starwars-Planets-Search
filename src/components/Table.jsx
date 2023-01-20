@@ -3,16 +3,14 @@ import { useContext } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 import Loading from './Loading';
 
-function Table() {
+function Table({ planetName }) {
   const { planetsData, loading } = useContext(PlanetsContext);
 
   if (loading || !planetsData) {
     return <Loading />;
   }
 
-  console.log(planetsData);
-
-  const planets = planetsData.results;
+  let planets = planetsData.results;
 
   delete planets[0].residents;
 
@@ -32,8 +30,13 @@ function Table() {
   };
 
   const toTableData = (planet, index) => theaders.map((theader) => (
-    <td key={ index }>{formatUrl(planet[theader])}</td>
+    <td key={ `${planet[theader]}${index}${index}` }>{formatUrl(planet[theader])}</td>
   ));
+
+  if (planetName) {
+    planets = planets.filter((planet) => planet.name.toLowerCase()
+      .includes(planetName.toLowerCase()));
+  }
 
   return (
     <table>
@@ -48,21 +51,22 @@ function Table() {
       </thead>
       <tbody>
         {
-          planets.map((planet, index) => {
-            console.log(planet);
-            return (
-              <tr key={ planet.name + index }>
-                {
-                  toTableData(planet)
-                }
-              </tr>
-            );
-          })
+          planets.map((planet, index) => (
+            <tr key={ planet.name + index }>
+              {
+                toTableData(planet)
+              }
+            </tr>
+          ))
         }
       </tbody>
     </table>
   );
 }
+
+Table.propTypes = {
+  planetName: PropTypes.string,
+}.isRequired;
 
 Table.propTypes = {
   tdatas: PropTypes.arrayOf(),
