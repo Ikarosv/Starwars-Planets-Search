@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 import Loading from './Loading';
 
-function Table({ planetName }) {
+function Table({ planetName, comparison }) {
   const { planetsData, loading } = useContext(PlanetsContext);
 
   if (loading || !planetsData) {
@@ -35,6 +35,24 @@ function Table({ planetName }) {
   if (planetName) {
     planets = planets.filter((planet) => planet.name.toLowerCase()
       .includes(planetName.toLowerCase()));
+  }
+
+  if (Object.keys(comparison).length) {
+    const { valueFilter, columnFilter, comparisonFilter } = comparison;
+
+    switch (comparisonFilter) {
+    case 'maior que':
+      planets = planets.filter((planet) => +planet[columnFilter] > valueFilter);
+      break;
+    case 'menor que':
+      planets = planets.filter((planet) => +planet[columnFilter] < valueFilter);
+      break;
+    case 'igual a':
+      planets = planets.filter((planet) => planet[columnFilter] === valueFilter);
+      break;
+    default: break;
+    }
+    planets = planets.filter((planet) => planet[columnFilter] !== 'unknown');
   }
 
   return (
