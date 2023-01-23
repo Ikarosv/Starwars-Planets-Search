@@ -6,14 +6,14 @@ import Select from './components/Select';
 import Table from './components/Table';
 import PlanetsProvider from './context/PlanetsProvider';
 
-const COLUM_FILTER_OPTIONS = [
-  'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water'];
 const COMPARISON_FILTER_OPTIONS = ['maior que', 'menor que', 'igual a'];
 
 function App() {
   const [planetName, setPlanetName] = useState('');
+  const [COLUMN_FILTER_OPTIONS, setColumnFilterOptions] = useState([
+    'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
   const [valueFilter, setValueFilter] = useState(0);
-  const [columnFilter, setColumnFilter] = useState(COLUM_FILTER_OPTIONS[0]);
+  const [columnFilter, setColumnFilter] = useState(COLUMN_FILTER_OPTIONS[0]);
   const [comparisonFilter, setComparisonFilter] = useState(COMPARISON_FILTER_OPTIONS[0]);
   const [comparison, setComparison] = useState([]);
 
@@ -24,6 +24,11 @@ function App() {
       columnFilter,
       comparisonFilter,
     }]);
+
+    const options = COLUMN_FILTER_OPTIONS
+      .filter((option) => option !== columnFilter);
+    setColumnFilterOptions(options);
+    setColumnFilter(options[0]);
   };
 
   return (
@@ -42,7 +47,7 @@ function App() {
           data-testid="column-filter"
           value={ columnFilter }
           onChange={ (e) => setColumnFilter(e.target.value) }
-          options={ COLUM_FILTER_OPTIONS }
+          options={ COLUMN_FILTER_OPTIONS }
         />
         <Select
           data-testid="comparison-filter"
