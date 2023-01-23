@@ -15,15 +15,15 @@ function App() {
   const [valueFilter, setValueFilter] = useState(0);
   const [columnFilter, setColumnFilter] = useState(COLUM_FILTER_OPTIONS[0]);
   const [comparisonFilter, setComparisonFilter] = useState(COMPARISON_FILTER_OPTIONS[0]);
-  const [comparison, setComparison] = useState({});
+  const [comparison, setComparison] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setComparison({
+    setComparison([...comparison, {
       valueFilter,
       columnFilter,
       comparisonFilter,
-    });
+    }]);
   };
 
   return (

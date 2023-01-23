@@ -38,21 +38,21 @@ function Table({ planetName, comparison }) {
   }
 
   if (Object.keys(comparison).length) {
-    const { valueFilter, columnFilter, comparisonFilter } = comparison;
-
-    switch (comparisonFilter) {
-    case 'maior que':
-      planets = planets.filter((planet) => +planet[columnFilter] > valueFilter);
-      break;
-    case 'menor que':
-      planets = planets.filter((planet) => +planet[columnFilter] < valueFilter);
-      break;
-    case 'igual a':
-      planets = planets.filter((planet) => planet[columnFilter] === valueFilter);
-      break;
-    default: break;
-    }
-    planets = planets.filter((planet) => planet[columnFilter] !== 'unknown');
+    planets = comparison.reduce((acc, item) => {
+      const { valueFilter, columnFilter, comparisonFilter } = item;
+      switch (comparisonFilter) {
+      case 'maior que':
+        return acc.filter((planet) => +planet[columnFilter] > valueFilter)
+          .filter((planet) => planet[columnFilter] !== 'unknown');
+      case 'menor que':
+        return acc.filter((planet) => +planet[columnFilter] < valueFilter)
+          .filter((planet) => planet[columnFilter] !== 'unknown');
+      case 'igual a':
+        return acc.filter((planet) => planet[columnFilter] === valueFilter)
+          .filter((planet) => planet[columnFilter] !== 'unknown');
+      default: return acc;
+      }
+    }, planets);
   }
 
   return (
