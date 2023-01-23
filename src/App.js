@@ -31,6 +31,21 @@ function App() {
     setColumnFilter(options[0]);
   };
 
+  const resetFilters = () => {
+    setComparison([]);
+    const options = [
+      'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water'];
+
+    setColumnFilter(options);
+    setColumnFilter(options[0]);
+  };
+
+  const handleDeletion = (column) => {
+    const deleted = comparison.filter((filter) => filter.columnFilter !== column);
+    setComparison(deleted);
+    setColumnFilterOptions([...COLUMN_FILTER_OPTIONS, column]);
+  };
+
   return (
     <PlanetsProvider>
       <Input
@@ -68,6 +83,33 @@ function App() {
           filtrar
         </Button>
       </form>
+      <ul>
+        {
+          comparison.map((filter) => (
+            <li key={ filter.columnFilter } data-testid="filter">
+              <p>
+                {
+                  `${filter.columnFilter} 
+                  ${filter.comparisonFilter} ${filter.valueFilter}`
+                }
+                <button
+                  type="button"
+                  onClick={ () => handleDeletion(filter.columnFilter) }
+                >
+                  X
+
+                </button>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+      <button
+        onClick={ resetFilters }
+        data-testid="button-remove-filters"
+      >
+        Remover Filtros
+      </button>
       <Table
         planetName={ planetName }
         comparison={ comparison }
