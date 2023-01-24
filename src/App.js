@@ -7,6 +7,11 @@ import Table from './components/Table';
 import PlanetsProvider from './context/PlanetsProvider';
 
 const COMPARISON_FILTER_OPTIONS = ['maior que', 'menor que', 'igual a'];
+const DROPDOWN_OPTIONS = ['population',
+  'orbital_period',
+  'diameter',
+  'rotation_period',
+  'surface_water'];
 
 function App() {
   const [planetName, setPlanetName] = useState('');
@@ -17,7 +22,11 @@ function App() {
   const [comparisonFilter, setComparisonFilter] = useState(COMPARISON_FILTER_OPTIONS[0]);
   const [comparison, setComparison] = useState([]);
 
-  const handleSubmit = (e) => {
+  const [columnSort, setColumnSort] = useState(DROPDOWN_OPTIONS[0]);
+  const [directionSort, setDirectionSort] = useState('ASC');
+  const [sortByColumn, setSortByColumn] = useState({});
+
+  const handleComparison = (e) => {
     e.preventDefault();
     setComparison([...comparison, {
       valueFilter,
@@ -33,10 +42,10 @@ function App() {
 
   const resetFilters = () => {
     setComparison([]);
-    const options = [
-      'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water'];
+    const options = ['population', 'orbital_period', 'diameter',
+      'rotation_period', 'surface_water'];
 
-    setColumnFilter(options);
+    setColumnFilterOptions(options);
     setColumnFilter(options[0]);
   };
 
@@ -44,6 +53,11 @@ function App() {
     const deleted = comparison.filter((filter) => filter.columnFilter !== column);
     setComparison(deleted);
     setColumnFilterOptions([...COLUMN_FILTER_OPTIONS, column]);
+  };
+
+  const handleSort = (e) => {
+    e.preventDefault();
+    setSortByColumn({ order: { column: columnSort, sort: directionSort } });
   };
 
   return (
@@ -56,7 +70,7 @@ function App() {
       />
       <br />
       <form
-        onSubmit={ handleSubmit }
+        onSubmit={ handleComparison }
       >
         <Select
           data-testid="column-filter"
@@ -82,6 +96,46 @@ function App() {
         >
           filtrar
         </Button>
+      </form>
+      <form
+        onSubmit={ handleSort }
+      >
+        <Select
+          value={ columnSort }
+          onChange={ (e) => setColumnSort(e.target.value) }
+          data-testid="column-sort"
+          options={ DROPDOWN_OPTIONS }
+        />
+        <label htmlFor="directionSort1">
+          <input
+            data-testid="column-sort-input-asc"
+            id="directionSort1"
+            type="radio"
+            name="directionSort"
+            value="ASC"
+            checked={ directionSort === 'ASC' }
+            onChange={ (e) => setDirectionSort(e.target.value) }
+          />
+          Ascendente
+        </label>
+        <label htmlFor="directionSort2">
+          <input
+            data-testid="column-sort-input-desc"
+            id="directionSort2"
+            type="radio"
+            name="directionSort"
+            value="DESC"
+            onChange={ (e) => setDirectionSort(e.target.value) }
+          />
+          Descendente
+        </label>
+
+        <button
+          type="submit"
+          data-testid="column-sort-button"
+        >
+          Ordenar
+        </button>
       </form>
       <ul>
         {
@@ -113,6 +167,7 @@ function App() {
       <Table
         planetName={ planetName }
         comparison={ comparison }
+        sortByColumn={ sortByColumn }
       />
     </PlanetsProvider>
   );

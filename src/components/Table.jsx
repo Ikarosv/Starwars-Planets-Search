@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import PlanetsContext from '../context/PlanetsContext';
 import Loading from './Loading';
 
-function Table({ planetName, comparison }) {
+function Table({ planetName, comparison, sortByColumn }) {
   const { planetsData, loading } = useContext(PlanetsContext);
 
   if (loading || !planetsData) {
@@ -29,7 +29,12 @@ function Table({ planetName, comparison }) {
   };
 
   const toTableData = (planet, index) => theaders.map((theader) => (
-    <td key={ `${planet[theader]}${index}${index}` }>{formatUrl(planet[theader])}</td>
+    <td
+      key={ `${planet[theader]}${index}${index}` }
+      data-testid={ `planet-${theader}` }
+    >
+      {formatUrl(planet[theader])}
+    </td>
   ));
 
   if (planetName) {
@@ -40,19 +45,33 @@ function Table({ planetName, comparison }) {
   if (Object.keys(comparison).length) {
     planets = comparison.reduce((acc, item) => {
       const { valueFilter, columnFilter, comparisonFilter } = item;
-      switch (comparisonFilter) {
-      case 'maior que':
-        return acc.filter((planet) => +planet[columnFilter] > valueFilter)
-          .filter((planet) => planet[columnFilter] !== 'unknown');
-      case 'menor que':
-        return acc.filter((planet) => +planet[columnFilter] < valueFilter)
-          .filter((planet) => planet[columnFilter] !== 'unknown');
-      case 'igual a':
-        return acc.filter((planet) => planet[columnFilter] === valueFilter)
-          .filter((planet) => planet[columnFilter] !== 'unknown');
-      default: return acc;
-      }
+      return acc.filter((planet) => {
+        switch (comparisonFilter) {
+        case 'maior que':
+          return +planet[columnFilter] > valueFilter;
+        case 'menor que':
+          return +planet[columnFilter] < valueFilter;
+        case 'igual a':
+          return planet[columnFilter] === valueFilter;
+        default: return acc;
+        }
+      });
     }, planets);
+  }
+
+  if (Object.keys(sortByColumn).length) {
+    const { sort, column } = sortByColumn.order;
+    planets = planets.reduce((acc, curr) => {
+      if (curr[column] === 'unknown') {
+        acc.push(curr);
+      } else {
+        const index = acc.findIndex((item) => item[column] === 'unknown');
+        acc.splice(index, 0, curr);
+      }
+      return acc;
+    }, []);
+    planets = planets.sort((a, b) => (sort === 'ASC' ? a[column] - b[column]
+      : b[column] - a[column]));
   }
 
   return (
@@ -71,7 +90,7 @@ function Table({ planetName, comparison }) {
           planets.map((planet, index) => (
             <tr key={ planet.name + index }>
               {
-                toTableData(planet)
+                toTableData(planet, index)
               }
             </tr>
           ))
