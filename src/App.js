@@ -146,14 +146,14 @@ function App() {
                   `${filter.columnFilter} 
                   ${filter.comparisonFilter} ${filter.valueFilter}`
                 }
-                <button
-                  type="button"
-                  onClick={ () => handleDeletion(filter.columnFilter) }
-                >
-                  X
-
-                </button>
               </p>
+              <button
+                type="button"
+                onClick={ () => handleDeletion(filter.columnFilter) }
+              >
+                X
+
+              </button>
             </li>
           ))
         }
